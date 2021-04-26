@@ -1,9 +1,8 @@
 var data = {};
 
 var now = moment();
-$("#currentDay").text(
-    now.format('dddd, MMMM Do')
-);
+var formatNow = now.format('dddd, MMMM Do');
+$("#currentDay").text(formatNow);
 
 var createTimeBlock = function(time, text) {
     var timeBlock = $("<li>")
@@ -54,8 +53,12 @@ var loadData = function() {
     });
 }
 
-var saveTasks = function() {
+var saveData = function() {
     localStorage.setItem("data", JSON.stringify(data));
+}
+
+var clearData = function() {
+    localStorage.clear();
 }
 
 var auditTimeBlock = function(timeBlock) {
@@ -88,4 +91,49 @@ var auditTimeBlock = function(timeBlock) {
     }
 }
 
+$(".list-group").on("click", "button", function() {
+    var timeBlock = $(this).closest(".time-block");
+
+    var time = timeBlock
+        .find("span")
+        .text();
+
+    var textInput = timeBlock
+        .find("textarea")
+        .val()
+        .trim();
+    
+    data[time] = textInput;
+    saveData();
+});
+
 loadData();
+
+var gap = function() {
+    var now = moment();
+    var midNight = moment().set("hour", 23); // 11pm
+    // var midNight = moment().add(15, "s");
+
+    var nowMilli = now.hour() * 60 * 60 * 1000 +
+        now.minute() * 60 * 1000 +
+        now.second() * 1000 +
+        now.millisecond();
+
+    var midNightMilli = midNight.hour() * 60 * 60 * 1000 +
+        midNight.minute() * 60 * 1000 +
+        midNight.second() * 1000 +
+        midNight.millisecond();
+
+    return midNightMilli - nowMilli;
+}
+
+setTimeout(function() {
+    clearData();
+    location.reload();
+}, gap());
+
+setInterval(function() {
+    $(".time-block").each(function(index, e) {
+        auditTimeBlock(e);
+    });
+}, 30 * 60 * 1000);
