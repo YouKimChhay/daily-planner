@@ -1,7 +1,7 @@
 # Work Day Scheduler
 
 ## Website
-(to be completed)
+https://youkimchhay.github.io/daily-planner/
 
 ## Purpose
 A simple page that can be used to plan today's work schedule.
